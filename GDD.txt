@@ -1,0 +1,376 @@
+Game Design Document: Defender
+
+1. High Concept
+
+Defender is a fast, side-scrolling arcade shooter where the player pilots a nimble spacecraft above a hostile alien planet. The player must destroy waves of alien attackers while protecting vulnerable humanoids on the planet surface. The game emphasizes speed, situational awareness, precision shooting, rescue decisions, and escalating chaos.
+
+This design targets a faithful classic-arcade experience inspired by the original Defender: short sessions, immediate restarts, high score chasing, intense enemy pressure, and readable but unforgiving action.
+
+2. Design Pillars
+
+- Speed and control: The ship should feel powerful, responsive, and slightly dangerous at high speed.
+- Protect and survive: The player is not only fighting enemies, but defending humanoids from abduction.
+- Constant pressure: Enemies should force movement, prioritization, and quick tactical decisions.
+- Readable chaos: The screen can become busy, but threats, projectiles, humanoids, and the player ship must remain visually distinct.
+- Score mastery: Advanced play comes from chaining efficient kills, rescues, smart bomb timing, and wave survival.
+
+3. Player Fantasy
+
+The player is the last defender of a planet under alien invasion. They streak across the landscape at extreme speed, reverse direction instantly, blast enemies out of the sky, rescue falling humanoids at the last possible moment, and barely survive wave after wave.
+
+4. Target Platform and Format
+
+- Genre: 2D side-scrolling arcade shooter
+- Camera: Horizontal scrolling with wraparound world
+- Session length: 2-10 minutes
+- Primary mode: Single-player high score mode
+- Input: Keyboard/gamepad, with arcade-style direct controls
+- Display: Fixed viewport showing a slice of a larger horizontally wrapping world
+
+5. Core Gameplay Loop
+
+1. A wave begins with humanoids on the planet surface and enemies entering the world.
+2. The player scans the radar, flies toward threats, and destroys enemies.
+3. Landers attempt to abduct humanoids from the surface.
+4. The player chooses between chasing enemies, saving humanoids, dodging projectiles, or using limited smart bombs.
+5. If a humanoid is abducted to the top of the screen, the lander mutates into a more dangerous enemy.
+6. The wave ends when all enemies are destroyed.
+7. The next wave begins with greater enemy variety, speed, and density.
+
+6. Controls
+
+Keyboard default:
+
+- Up: Thrust upward
+- Down: Thrust downward
+- Left: Face/move left
+- Right: Face/move right
+- Fire: Shoot laser
+- Reverse: Instantly flip ship direction
+- Smart Bomb: Destroy most enemies on screen
+- Hyperspace: Emergency teleport with risk
+- Pause: Pause game
+
+Gamepad default:
+
+- Left stick/D-pad: Movement
+- Face button: Fire
+- Shoulder button: Reverse
+- Face button: Smart Bomb
+- Face button: Hyperspace
+- Start: Pause
+
+Control requirements:
+
+- Horizontal movement is fast and responsive.
+- Vertical movement is slower than horizontal movement to preserve the classic chase dynamic.
+- Reverse direction should be instant or near-instant.
+- Firing should be rapid, with a limited number of active laser shots to preserve arcade rhythm.
+
+7. Player Ship
+
+The player ship can move freely within the viewport while the world scrolls horizontally around it. The ship faces either left or right and fires in its current facing direction.
+
+Player properties:
+
+- Lives: 3 starting lives
+- Smart bombs: 3 starting bombs
+- Hyperspace: Unlimited uses, but carries a chance of ship destruction or dangerous repositioning
+- Collision: Ship is destroyed by enemy contact, enemy projectiles, and certain hazards
+- Respawn: Brief invulnerability after losing a life
+
+8. World and Scrolling
+
+The game world is a horizontally wrapping planet surface. Flying past one edge loops the player around to the other side. The viewport scrolls based on ship movement.
+
+World elements:
+
+- Planet terrain at the bottom of the playfield
+- Humanoids placed along the terrain
+- Enemies moving independently through the playfield
+- Radar/minimap showing the entire world width
+
+The radar is essential. It should show:
+
+- Player position
+- Humanoids
+- Active enemies
+- Abduction events
+- Mutants or high-priority threats
+
+9. Humanoids
+
+Humanoids are non-combatant characters standing on the planet surface. They are the core objective beyond survival.
+
+Humanoid behavior:
+
+- Begin each wave standing on the surface.
+- Can be targeted and grabbed by landers.
+- If dropped from height, fall toward the ground.
+- Can be rescued by the player catching them.
+- Return safely to the ground if carried or dropped gently.
+- Die if they hit the ground too fast or are carried off by enemies.
+
+Fail state:
+
+- If all humanoids are lost, the planet is destroyed.
+- After planet destruction, the game enters a more dangerous state where all remaining or future landers become mutants.
+
+10. Enemies
+
+Landers:
+
+- Primary abductor enemy.
+- Move toward humanoids, grab them, and carry them upward.
+- If they reach the top of the screen with a humanoid, they transform into mutants.
+- Priority target because they threaten the wave objective.
+
+Mutants:
+
+- Fast, aggressive enemies created when landers successfully abduct humanoids or when the planet is destroyed.
+- Chase the player directly with erratic motion.
+- Create high pressure and force defensive flying.
+
+Bombers:
+
+- Lay drifting mines or bombs in the playfield.
+- Create spatial hazards that restrict movement.
+- Encourage route planning and careful dodging.
+
+Baiters:
+
+- Appear if the player takes too long to clear a wave.
+- Fast, aggressive, difficult to avoid.
+- Prevent passive or overly cautious play.
+
+Pods:
+
+- Larger enemies that split into smaller swarmers when destroyed.
+- Reward careful timing and positioning before firing.
+
+Swarmers:
+
+- Small, fast enemies released by pods.
+- Move unpredictably and attack in groups.
+- Dangerous when mixed with other enemy types.
+
+11. Wave Structure
+
+Each wave contains a defined set of enemies and humanoids. Early waves teach the player to identify landers and use the radar. Later waves layer in more enemy types, faster movement, denser projectile patterns, and stricter rescue pressure.
+
+Example progression:
+
+- Wave 1: Landers only, moderate speed.
+- Wave 2: More landers, faster abductions.
+- Wave 3: Landers and bombers.
+- Wave 4: Landers, bombers, and pods.
+- Wave 5+: Increased counts, faster enemies, more baiter pressure.
+
+Difficulty scaling:
+
+- Increase enemy count.
+- Increase enemy speed and aggression.
+- Increase projectile frequency.
+- Reduce time before baiters appear.
+- Increase simultaneous abductions.
+
+12. Scoring
+
+Scoring should encourage both survival and active defense.
+
+Suggested values:
+
+- Lander destroyed: 150 points
+- Mutant destroyed: 150 points
+- Bomber destroyed: 250 points
+- Pod destroyed: 1,000 points
+- Swarmer destroyed: 150 points
+- Baiter destroyed: 200 points
+- Humanoid rescued from falling: 500 points
+- Humanoid protected through wave: 100 points each
+- Wave cleared: bonus based on surviving humanoids
+
+Extra life:
+
+- Award an extra life at a score milestone, such as 10,000 points, then at recurring milestones.
+
+13. Weapons and Power-Ups
+
+Laser:
+
+- Primary weapon.
+- Fires horizontally in the ship's facing direction.
+- Fast projectile speed.
+- Limited active shots on screen.
+
+Smart Bomb:
+
+- Clears most enemies currently visible on screen.
+- Does not destroy humanoids.
+- Limited stock.
+- Best used when surrounded or when multiple abductions are happening.
+
+Hyperspace:
+
+- Emergency escape.
+- Teleports ship to a random location.
+- Has a risk of destruction or spawning into danger.
+- Should feel like a desperate choice, not a safe reset.
+
+Optional modern additions:
+
+- Toggleable accessibility mode reducing hyperspace failure chance.
+- Practice mode with wave select.
+- Local high score initials.
+
+14. Player Damage and Lives
+
+The player loses one life when the ship collides with an enemy, enemy projectile, mine, or fatal hazard. On death:
+
+- Ship explodes with brief visual and audio feedback.
+- Action pauses briefly for impact.
+- Remaining enemies continue after respawn.
+- Player respawns near a safe-ish location.
+- Temporary invulnerability prevents instant repeat death.
+
+Game over occurs when the player has no lives remaining.
+
+15. Win and Loss Conditions
+
+Primary objective:
+
+- Survive as many waves as possible and achieve the highest score.
+
+Wave clear:
+
+- All required enemies are destroyed.
+
+Game over:
+
+- Player loses all lives.
+
+Planet loss:
+
+- All humanoids die or are abducted.
+- The game continues, but the world becomes more hostile through mutant-heavy waves.
+
+16. Visual Direction
+
+Style:
+
+- Bright vector-inspired arcade visuals.
+- Black or very dark space background.
+- Neon ship, enemy, projectile, radar, and explosion colors.
+- Simple silhouettes with strong color coding.
+
+Readability:
+
+- Player ship should be the brightest and most distinct object.
+- Humanoids should be small but clearly animated.
+- Abduction beams or carrying states must be obvious.
+- Enemy projectile colors should contrast with player lasers.
+- Radar icons should be simplified and immediately recognizable.
+
+Effects:
+
+- Ship thrust trail.
+- Laser streaks.
+- Enemy pop explosions.
+- Smart bomb screen flash.
+- Humanoid falling animation.
+- Planet destruction sequence if all humanoids are lost.
+
+17. Audio Direction
+
+Audio should be sharp, synthetic, and reactive.
+
+Core sounds:
+
+- Constant low engine or movement tone.
+- Laser fire.
+- Enemy explosions.
+- Humanoid pickup/rescue.
+- Humanoid death.
+- Lander abduction warning.
+- Mutant transformation sting.
+- Smart bomb detonation.
+- Player death explosion.
+- Wave start and wave clear cues.
+
+Music:
+
+- Minimal or absent during gameplay to preserve classic arcade tension.
+- Use escalating warning tones and enemy sounds as the main soundtrack.
+
+18. User Interface
+
+HUD elements:
+
+- Current score
+- High score
+- Lives remaining
+- Smart bombs remaining
+- Wave number
+- Radar/minimap
+- Remaining humanoids, either shown directly or visible on radar
+
+Menus:
+
+- Title screen
+- Start game
+- Controls
+- High scores
+- Optional settings
+- Game over and initials entry
+
+20. Technical Design Notes
+
+Core systems:
+
+- Entity system for player, enemies, projectiles, humanoids, particles, and pickups.
+- Horizontally wrapping world coordinates.
+- Camera that follows player movement while respecting vertical playfield bounds.
+- Radar projection from world coordinates to minimap coordinates.
+- Wave manager for enemy spawning, escalation, and clear detection.
+- Collision system for projectiles, enemies, player, terrain, and humanoids.
+- Score and high score persistence.
+
+Important implementation details:
+
+- Separate world position from screen position because the world wraps horizontally.
+- Keep enemy AI state-driven: patrol, seek humanoid, abduct, flee/carry, chase player, attack.
+- Make radar independent from viewport so it always represents the full world.
+- Tune movement and enemy speeds before adding extra content.
+- Build debug tools for spawning enemies, jumping waves, and visualizing world wrap boundaries.
+
+21. Tuning Targets
+
+Initial tuning goals:
+
+- A skilled player can clear Wave 1 without losing a life after learning controls.
+- A new player should understand lander abductions within the first two waves.
+- Player ship should cross the full world quickly enough that radar decisions matter.
+- Smart bombs should feel valuable enough that players hesitate before using them.
+- Baiters should appear rarely in good play but quickly punish stalling.
+
+22. Risks
+
+- Controls may feel frustrating if the ship is too slippery or too slow to reverse.
+- Radar may be ignored if it is too noisy or too small.
+- Humanoid rescue may feel unfair if falling speed or catch collision is too strict.
+- Enemy density can become unreadable without strong color and sound hierarchy.
+- Faithfulness to the original must be balanced with modern comfort options.
+
+Art Style
+- Neon green line Art
+
+UI:
+- Use the skill make-classic-game-ui for the HTML layout and javascript for the game logic.
+- The top left panel shows Score, the top right shows Lives left
+
+Game Feel:
+- When the player hits an en enemy or the enemy hits the player, do the following: character specific hit flash, hit pause, camera shake, vfx and sound fx
+- There should be audio and particle effects for: spawning, projectile shots, projectile hits, death
+
+Additonal Notes:
+- All configurable elements should be defined in config.js

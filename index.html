@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Defender</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="game-container">
+    <header class="game-header">
+      <div class="hud-card">
+        <span class="hud-label">Score</span>
+        <span id="score" class="hud-value">0</span>
+      </div>
+
+      <div class="title-block">
+        <h1 class="game-title">DEFENDER</h1>
+        <p class="game-subtitle">A Classic</p>
+      </div>
+
+      <div class="hud-card hud-card-right">
+        <span class="hud-label">Lives</span>
+        <span id="lives" class="hud-value">3</span>
+      </div>
+    </header>
+
+    <div class="hud-secondary">
+      <div class="hud-mini">
+        <span class="hud-mini-label">Wave</span>
+        <span id="wave" class="hud-mini-value">1</span>
+      </div>
+      <div class="hud-mini">
+        <span class="hud-mini-label">Bombs</span>
+        <span id="bombs" class="hud-mini-value">3</span>
+      </div>
+      <div class="hud-mini">
+        <span class="hud-mini-label">Humanoids</span>
+        <span id="humanoids" class="hud-mini-value">10</span>
+      </div>
+      <div class="hud-mini">
+        <span class="hud-mini-label">High</span>
+        <span id="high-score" class="hud-mini-value">0</span>
+      </div>
+    </div>
+
+    <main class="playfield-shell">
+      <div class="canvas-wrapper">
+        <canvas id="radar-canvas" width="640" height="48"></canvas>
+        <canvas id="game-canvas" width="640" height="480"></canvas>
+      </div>
+
+      <div id="menu-overlay" class="overlay">
+        <div class="prompt-card">
+          <p class="prompt-text">Protect the humanoids. Destroy the invaders.</p>
+          <button id="play-btn" class="btn btn-primary">Play</button>
+          <button id="controls-btn" class="btn btn-secondary">Controls</button>
+        </div>
+      </div>
+
+      <div id="controls-overlay" class="overlay hidden">
+        <div class="popup">
+          <h2>Controls</h2>
+          <ul class="controls-list">
+            <li><kbd>↑</kbd> / <kbd>↓</kbd> — Thrust up / down</li>
+            <li><kbd>←</kbd> / <kbd>→</kbd> — Move left / right</li>
+            <li><kbd>Space</kbd> — Fire laser</li>
+            <li><kbd>Z</kbd> — Reverse direction</li>
+            <li><kbd>X</kbd> — Smart bomb</li>
+            <li><kbd>C</kbd> — Hyperspace</li>
+            <li><kbd>P</kbd> / <kbd>Esc</kbd> — Pause</li>
+          </ul>
+          <button id="controls-back-btn" class="btn btn-primary">Back</button>
+        </div>
+      </div>
+
+      <div id="pause-overlay" class="overlay hidden">
+        <div class="popup">
+          <h2>Paused</h2>
+          <p>Press P or Esc to resume</p>
+          <button id="resume-btn" class="btn btn-primary">Resume</button>
+        </div>
+      </div>
+
+      <div id="gameover-overlay" class="overlay hidden">
+        <div class="popup">
+          <h2>Game Over</h2>
+          <p id="final-score">Score: 0</p>
+          <button id="restart-btn" class="btn btn-primary">Play Again</button>
+        </div>
+      </div>
+    </main>
+
+    <button id="music-toggle" class="music-toggle" type="button">Audio: On</button>
+  </div>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
