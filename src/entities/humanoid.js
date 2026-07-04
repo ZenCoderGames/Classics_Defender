@@ -1,5 +1,5 @@
 import { CONFIG } from '../config.js';
-import { terrainYAt, wrapX } from '../world.js';
+import { humanoidGroundY, wrapX } from '../world.js';
 
 let nextId = 1;
 
@@ -14,7 +14,7 @@ export function createHumanoids(count) {
 }
 
 export function createHumanoid(x) {
-  const y = terrainYAt(x) - CONFIG.humanoid.height;
+  const y = humanoidGroundY() - CONFIG.humanoid.height;
   return {
     id: nextId++,
     x,
@@ -34,7 +34,7 @@ export function updateHumanoid(h, dt, player) {
   if (h.flash > 0) h.flash -= dt;
 
   if (h.state === 'standing') {
-    h.y = terrainYAt(h.x) - CONFIG.humanoid.height;
+    h.y = humanoidGroundY() - CONFIG.humanoid.height;
   } else if (h.state === 'grabbed') {
     // position set by lander
   } else if (h.state === 'falling') {
@@ -51,7 +51,7 @@ export function updateHumanoid(h, dt, player) {
       }
     }
 
-    const ground = terrainYAt(h.x) - CONFIG.humanoid.height;
+    const ground = humanoidGroundY() - CONFIG.humanoid.height;
     if (h.y >= ground) {
       if (CONFIG.humanoid.fallSpeed > CONFIG.humanoid.safeFallSpeed) {
         h.alive = false;
@@ -84,14 +84,13 @@ export function dropCarriedHumanoid(player) {
 
 export function canDropCarriedHumanoid(player) {
   if (!player?.carryingHumanoid) return false;
-  const terrainSurface = terrainYAt(player.x);
   const humanoidBottom = player.y + CONFIG.humanoid.carryOffsetY + 6;
-  return humanoidBottom >= terrainSurface - CONFIG.humanoid.dropProximity;
+  return humanoidBottom >= humanoidGroundY() - CONFIG.humanoid.dropProximity;
 }
 
 export function releaseHumanoidToGround(h) {
   h.state = 'standing';
-  h.y = terrainYAt(h.x) - CONFIG.humanoid.height;
+  h.y = humanoidGroundY() - CONFIG.humanoid.height;
   h.fallSpeed = 0;
 }
 

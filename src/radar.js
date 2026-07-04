@@ -55,7 +55,7 @@ export class Radar {
     for (const e of state.enemies) {
       if (!e.alive) continue;
       const color = RADAR_COLORS[e.type] || '#fff';
-      const y = pad + 6 + (e.y / CONFIG.world.groundY) * (groundY - pad - 10);
+      const y = pad + 6 + (e.y / CONFIG.canvas.height) * (groundY - pad - 10);
       const size = e.type === 'mutant' || e.type === 'baiter' ? 3 : 2;
       this.drawDot(ctx, toRadarX(e.x), y, size, color);
     }
@@ -66,7 +66,7 @@ export class Radar {
     }
 
     if (state.player.alive) {
-      const py = pad + 4 + (state.player.y / CONFIG.world.groundY) * (groundY - pad - 8);
+      const py = pad + 4 + (state.player.y / CONFIG.canvas.height) * (groundY - pad - 8);
       ctx.fillStyle = RADAR_COLORS.player;
       ctx.shadowColor = RADAR_COLORS.player;
       ctx.shadowBlur = 4;

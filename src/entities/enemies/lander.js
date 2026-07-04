@@ -1,5 +1,5 @@
 import { CONFIG } from '../../config.js';
-import { shortestX, terrainYAt, wrapX } from '../../world.js';
+import { shortestX, wrapX, humanoidGroundY } from '../../world.js';
 import { createEnemyBullet } from '../projectile.js';
 
 let nextId = 1;
@@ -43,13 +43,17 @@ export function updateLander(e, dt, humanoids, projectiles, player) {
     if (e.targetHumanoid) {
       const tx = shortestX(e.x, e.targetHumanoid.x);
       const dx = tx - e.x;
-      if (Math.abs(dx) < 30 && Math.abs(e.y - (e.targetHumanoid.y - 20)) < 40) {
+      const hoverY = e.targetHumanoid.y - cfg.hoverAboveHumanoid;
+      if (
+        Math.abs(dx) < cfg.abductAlignX &&
+        Math.abs(e.y - hoverY) < cfg.abductAlignY
+      ) {
         e.state = 'abducting';
         e.abductTimer = cfg.abductTime;
         e.abductSoundPlayed = false;
       } else {
         e.vx = Math.sign(dx || e.vx) * cfg.speed * e.speedMul;
-        e.y += Math.sign(e.targetHumanoid.y - 30 - e.y) * cfg.speed * 0.5 * dt;
+        e.y += Math.sign(hoverY - e.y) * cfg.speed * 0.75 * e.speedMul * dt;
       }
     }
   } else if (e.state === 'abducting') {
@@ -73,7 +77,8 @@ export function updateLander(e, dt, humanoids, projectiles, player) {
     }
   }
 
-  e.y = Math.max(CONFIG.world.skyTop, Math.min(CONFIG.world.groundY - 40, e.y));
+  const maxY = humanoidGroundY() - CONFIG.humanoid.height - cfg.hoverAboveHumanoid;
+  e.y = Math.max(CONFIG.world.skyTop, Math.min(maxY, e.y));
 
   e.fireTimer -= dt;
   if (e.fireTimer <= 0 && player?.alive) {

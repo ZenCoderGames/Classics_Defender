@@ -14,6 +14,9 @@ import { WaveManager } from './waves.js';
 import { Radar } from './radar.js';
 import { ParticleSystem } from './particles.js';
 import { AudioManager } from './audio.js';
+import { SpawnEffectSystem } from './spawnEffects.js';
+import { ScorePopupSystem } from './scorePopups.js';
+import { PostProcessor } from './postProcess.js';
 
 const HIGH_SCORE_KEY = 'defender-high-score';
 
@@ -26,6 +29,8 @@ export class Game {
     this.world = new World();
     this.player = new Player();
     this.particles = new ParticleSystem();
+    this.spawnEffects = new SpawnEffectSystem();
+    this.scorePopups = new ScorePopupSystem();
     this.audio = new AudioManager();
     this.radar = new Radar(radarCanvas);
     this.waves = new WaveManager(this);
@@ -51,6 +56,8 @@ export class Game {
 
     canvas.width = CONFIG.canvas.width;
     canvas.height = CONFIG.canvas.height;
+
+    this.postProcess = new PostProcessor(CONFIG.canvas.width, CONFIG.canvas.height);
   }
 
   start() {
@@ -64,6 +71,8 @@ export class Game {
     this.mines = [];
     this.projectiles = [];
     this.particles.clear();
+    this.spawnEffects.clear();
+    this.scorePopups.clear();
     this.deathExplosions = [];
     this.enemyRespawnTimer = 0;
     this.waves.reset();
@@ -80,7 +89,7 @@ export class Game {
     this.ui.gameoverOverlay.classList.add('hidden');
   }
 
-  addScore(points) {
+  addScore(points, worldX, worldY) {
     this.score += points;
     while (this.score >= this.nextExtraLife) {
       this.player.lives++;
@@ -91,14 +100,14 @@ export class Game {
       this.highScore = this.score;
       localStorage.setItem(HIGH_SCORE_KEY, String(this.highScore));
     }
+    if (worldX !== undefined && worldY !== undefined) {
+      this.scorePopups.spawn(worldX, worldY, points);
+    }
     this.updateHUD();
   }
 
   onWaveStart(wave) {
     this.audio.play('waveStart');
-    for (const e of this.enemies) {
-      this.particles.spawn(e.x, e.y, CONFIG.colors[e.type] || '#fff');
-    }
     this.ui.waveEl.textContent = wave;
   }
 
@@ -164,6 +173,8 @@ export class Game {
       this.updateEntities(dt * 0.5);
       this.updateDeathExplosions(dt);
       this.particles.update(dt);
+      this.scorePopups.update(dt);
+      this.spawnEffects.update(dt);
       this.world.update(dt, this.player.x);
       this.draw();
       return;
@@ -181,6 +192,8 @@ export class Game {
       this.checkPlanetLoss();
       this.world.update(dt, this.player.x);
       this.particles.update(dt);
+      this.scorePopups.update(dt);
+      this.spawnEffects.update(dt);
       this.input.clearJustPressed();
       this.draw();
       return;
@@ -209,7 +222,7 @@ export class Game {
       const h = this.player.carryingHumanoid;
       releaseHumanoidToGround(h);
       this.player.carryingHumanoid = null;
-      this.addScore(CONFIG.scoring.rescue);
+      this.addScore(CONFIG.scoring.rescue, h.x, h.y);
       this.audio.play('rescue');
       this.particles.burst(h.x, h.y, 10, CONFIG.colors.humanoid, 60);
     }
@@ -220,6 +233,8 @@ export class Game {
     this.checkPlanetLoss();
     this.world.update(dt, this.player.x);
     this.particles.update(dt);
+    this.spawnEffects.update(dt);
+    this.scorePopups.update(dt);
 
     this.updateDeathExplosions(dt);
 
@@ -412,8 +427,12 @@ export class Game {
 
     if (e.type === 'pod') {
       const swarmers = splitPod(e);
-      this.enemies.push(...swarmers);
-      for (const s of swarmers) this.particles.spawn(s.x, s.y, CONFIG.colors.swarmer);
+      for (const s of swarmers) {
+        this.spawnEffects.queue(s.x, s.y, CONFIG.colors.swarmer, () => {
+          this.enemies.push(s);
+          this.audio.play('spawn');
+        });
+      }
     }
 
     if (e.type === 'lander') {
@@ -421,7 +440,8 @@ export class Game {
     }
 
     const scoreKey = e.type === 'mine' ? 'mine' : e.type;
-    this.addScore(CONFIG.scoring[scoreKey] || CONFIG.enemies[e.type]?.score || 100);
+    const points = CONFIG.scoring[scoreKey] || CONFIG.enemies[e.type]?.score || 100;
+    this.addScore(points, e.x, e.y);
   }
 
   destroyEnemy(e, awardScore = true) {
@@ -429,10 +449,17 @@ export class Game {
     this.particles.burst(e.x, e.y, CONFIG.juice.deathParticleCount, CONFIG.colors[e.type] || '#fff', 120);
     if (e.type === 'lander') releaseGrabbedHumanoid(e);
     if (e.type === 'pod') {
-      this.enemies.push(...splitPod(e));
+      const swarmers = splitPod(e);
+      for (const s of swarmers) {
+        this.spawnEffects.queue(s.x, s.y, CONFIG.colors.swarmer, () => {
+          this.enemies.push(s);
+          this.audio.play('spawn');
+        });
+      }
     }
     if (awardScore) {
-      this.addScore(CONFIG.scoring[e.type] || 100);
+      const points = CONFIG.scoring[e.type] || 100;
+      this.addScore(points, e.x, e.y);
     }
   }
 
@@ -483,6 +510,7 @@ export class Game {
     this.enemies = [];
     this.mines = [];
     this.projectiles = [];
+    this.spawnEffects.clear();
     for (const h of this.humanoids) {
       if (h.state === 'grabbed') {
         h.state = 'falling';
@@ -528,7 +556,7 @@ export class Game {
   }
 
   draw() {
-    const ctx = this.ctx;
+    const ctx = this.postProcess.getSceneContext();
     this.world.draw(ctx);
 
     for (const m of this.mines) drawMine(ctx, this.world, m);
@@ -571,6 +599,8 @@ export class Game {
 
     this.player.draw(ctx, this.world);
     this.particles.draw(ctx, this.world);
+    this.spawnEffects.draw(ctx, this.world);
+    this.scorePopups.draw(ctx, this.world);
 
     if (this.smartBombFlash > 0) {
       ctx.fillStyle = CONFIG.colors.smartBombFlash;
@@ -608,6 +638,8 @@ export class Game {
       ctx.fillText('GET READY', CONFIG.canvas.width / 2, CONFIG.canvas.height / 2);
       ctx.globalAlpha = 1;
     }
+
+    this.postProcess.apply(this.ctx);
 
     this.radar.draw({
       player: this.player,

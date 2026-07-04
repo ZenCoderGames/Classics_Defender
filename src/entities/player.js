@@ -1,6 +1,13 @@
 import { CONFIG } from '../config.js';
-import { wrapX, terrainYAt } from '../world.js';
+import { wrapX, humanoidGroundY } from '../world.js';
 import { createLaser } from './projectile.js';
+
+function approachSpeed(current, target, rate, dt) {
+  if (current === target) return current;
+  const delta = rate * dt;
+  if (target > current) return Math.min(current + delta, target);
+  return Math.max(current - delta, target);
+}
 
 export class Player {
   constructor() {
@@ -39,14 +46,14 @@ export class Player {
       this.facing = move.dx > 0 ? 1 : -1;
     }
 
-    this.vx = move.dx * cfg.speedX;
-    this.vy = move.dy * cfg.speedY;
+    this.vx = approachSpeed(this.vx, move.dx * cfg.speedX, move.dx !== 0 ? cfg.accelX : cfg.decelX, dt);
+    this.vy = approachSpeed(this.vy, move.dy * cfg.speedY, move.dy !== 0 ? cfg.accelY : cfg.decelY, dt);
     this.thrusting = move.dx !== 0 || move.dy !== 0;
 
     this.x = wrapX(this.x + this.vx * dt);
     const maxY = this.carryingHumanoid
-      ? terrainYAt(this.x) - CONFIG.humanoid.carryDropPlayerOffset
-      : CONFIG.world.groundY - 30;
+      ? humanoidGroundY() - CONFIG.humanoid.carryDropPlayerOffset
+      : CONFIG.canvas.height - CONFIG.player.bottomMargin;
     this.y = Math.max(CONFIG.world.skyTop, Math.min(maxY, this.y + this.vy * dt));
 
     if (this.invuln > 0) this.invuln -= dt;
@@ -75,7 +82,7 @@ export class Player {
     }
 
     this.x = wrapX(Math.random() * CONFIG.world.width);
-    this.y = CONFIG.world.skyTop + 40 + Math.random() * (CONFIG.world.groundY - CONFIG.world.skyTop - 80);
+    this.y = CONFIG.world.skyTop + 40 + Math.random() * (CONFIG.canvas.height - CONFIG.world.skyTop - 80);
     return 'success';
   }
 

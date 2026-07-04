@@ -53,7 +53,7 @@ export function updateProjectile(p, dt) {
     }
   }
 
-  if (p.y < CONFIG.world.skyTop - 20 || p.y > CONFIG.world.groundY + 20) {
+  if (p.y < CONFIG.world.skyTop - 20 || p.y > CONFIG.canvas.height + 20) {
     p.alive = false;
   }
 }

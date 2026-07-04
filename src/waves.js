@@ -33,6 +33,15 @@ export class WaveManager {
     this.combatSuspended = true;
   }
 
+  queueEnemy(factory, x, y, type) {
+    const game = this.game;
+    const color = CONFIG.colors[type] || '#ffffff';
+    game.spawnEffects.queue(x, y, color, () => {
+      game.enemies.push(factory());
+      game.audio.play('spawn');
+    });
+  }
+
   spawnWaveEnemies() {
     const game = this.game;
     const cfg = getWaveConfig(this.wave);
@@ -40,19 +49,27 @@ export class WaveManager {
     const spawnY = () => CONFIG.world.skyTop + 50 + Math.random() * 100;
 
     for (let i = 0; i < cfg.landers; i++) {
-      game.enemies.push(createLander(Math.random() * CONFIG.world.width, spawnY(), speedMul));
+      const x = Math.random() * CONFIG.world.width;
+      const y = spawnY();
+      this.queueEnemy(() => createLander(x, y, speedMul), x, y, 'lander');
     }
     for (let i = 0; i < cfg.bombers; i++) {
-      game.enemies.push(createBomber(Math.random() * CONFIG.world.width, spawnY(), speedMul));
+      const x = Math.random() * CONFIG.world.width;
+      const y = spawnY();
+      this.queueEnemy(() => createBomber(x, y, speedMul), x, y, 'bomber');
     }
     for (let i = 0; i < cfg.pods; i++) {
-      game.enemies.push(createPod(Math.random() * CONFIG.world.width, spawnY(), speedMul));
+      const x = Math.random() * CONFIG.world.width;
+      const y = spawnY();
+      this.queueEnemy(() => createPod(x, y, speedMul), x, y, 'pod');
     }
 
     if (game.planetDestroyed) {
       const extraMutants = Math.floor(cfg.landers * 0.5);
       for (let i = 0; i < extraMutants; i++) {
-        game.enemies.push(createMutant(Math.random() * CONFIG.world.width, spawnY(), speedMul));
+        const x = Math.random() * CONFIG.world.width;
+        const y = spawnY();
+        this.queueEnemy(() => createMutant(x, y, speedMul), x, y, 'mutant');
       }
     }
 
@@ -63,10 +80,6 @@ export class WaveManager {
   respawnWaveEnemies() {
     this.combatSuspended = false;
     this.spawnWaveEnemies();
-    for (const e of this.game.enemies) {
-      this.game.particles.spawn(e.x, e.y, CONFIG.colors[e.type] || '#fff');
-    }
-    this.game.audio.play('spawn');
   }
 
   startWave() {
@@ -75,6 +88,7 @@ export class WaveManager {
     game.enemies = [];
     game.mines = [];
     game.projectiles = game.projectiles.filter((p) => p.owner === 'player');
+    game.spawnEffects.clear();
 
     if (this.wave === 1 || !game.humanoids.some((h) => h.alive)) {
       game.humanoids = createHumanoids(CONFIG.humanoid.count);
@@ -104,7 +118,7 @@ export class WaveManager {
     }
 
     const aliveEnemies = game.enemies.filter((e) => e.alive);
-    if (aliveEnemies.length === 0) {
+    if (aliveEnemies.length === 0 && !game.spawnEffects.isActive()) {
       this.triggerWaveClear();
       return;
     }
@@ -118,7 +132,9 @@ export class WaveManager {
       if (this.baiterTimer >= delay) {
         this.baiterSpawned = true;
         const cfg = getWaveConfig(this.wave);
-        game.enemies.push(createBaiter(wrapX(game.player.x + CONFIG.canvas.width), CONFIG.world.skyTop + 40, cfg.speedMul));
+        const x = wrapX(game.player.x + CONFIG.canvas.width);
+        const y = CONFIG.world.skyTop + 40;
+        this.queueEnemy(() => createBaiter(x, y, cfg.speedMul), x, y, 'baiter');
         game.audio.play('baiterSpawn');
       }
     }
@@ -140,9 +156,10 @@ export class WaveManager {
 
   spawnMutantFromLander(lander) {
     const cfg = getWaveConfig(this.wave);
-    const mutant = createMutant(lander.x, lander.y, cfg.speedMul);
-    this.game.enemies.push(mutant);
+    const x = lander.x;
+    const y = lander.y;
+    this.queueEnemy(() => createMutant(x, y, cfg.speedMul), x, y, 'mutant');
     this.game.audio.play('mutantTransform');
-    this.game.particles.burst(lander.x, lander.y, CONFIG.juice.deathParticleCount, CONFIG.colors.mutant, 150);
+    this.game.particles.burst(x, y, CONFIG.juice.deathParticleCount, CONFIG.colors.mutant, 150);
   }
 }

@@ -13,12 +13,26 @@ export const CONFIG = {
   world: {
     width: 3840,
     height: 480,
-    groundY: 420,
+    groundY: 370,
+    humanoidGroundY: 458,
     skyTop: 40,
+  },
+
+  terrain: {
+    stepSize: 45,
+    peakHeight: 38,
+    valleyDepth: 12,
+    peakLevels: 7,
   },
 
   camera: {
     followLerp: 0.12,
+  },
+
+  stars: {
+    count: 68,
+    minRadius: 0.6,
+    maxRadius: 2.4,
   },
 
   player: {
@@ -26,15 +40,20 @@ export const CONFIG = {
     height: 10,
     speedX: 300,
     speedY: 140,
+    accelX: 720,
+    decelX: 520,
+    accelY: 560,
+    decelY: 420,
     startLives: 3,
     startBombs: 3,
-    fireCooldown: 0.11,
-    maxActiveShots: 4,
+    fireCooldown: 0.15,
+    maxActiveShots: 12,
     invulnTime: 2.0,
     respawnDelay: 1.5,
     enemyRespawnDelay: 2.0,
     respawnY: 200,
-    thrustTrailRate: 0.03,
+    thrustTrailRate: 0.1,
+    bottomMargin: 6,
   },
 
   hyperspace: {
@@ -43,7 +62,7 @@ export const CONFIG = {
   },
 
   laser: {
-    width: 14,
+    width: 35,
     height: 3,
     speed: 520,
     maxRange: 720,
@@ -58,7 +77,7 @@ export const CONFIG = {
     safeFallSpeed: 40,
     catchRadius: 18,
     carryOffsetY: 14,
-    dropProximity: 6,
+    dropProximity: 12,
     carryDropPlayerOffset: 18,
     spacing: 340,
     startOffset: 120,
@@ -93,13 +112,21 @@ export const CONFIG = {
     mine: '#ff6688',
     humanoid: '#66ffaa',
     humanoidGrabbed: '#ffcc00',
-    terrain: '#1a4a1a',
-    terrainLine: '#39ff14',
-    star: '#1a3a1a',
-    starBright: '#2a5a2a',
+    terrain: '#020402',
+    terrainLine: '#ff8800',
+    star: '#cfcfcf',
+    starBright: '#e7e7e7',
     abductionBeam: '#ffaa0088',
     explosion: '#39ff14',
     smartBombFlash: '#ffffff',
+  },
+
+  postProcess: {
+    enabled: true,
+    blur: 10,
+    strength: 0.5,
+    scale: 0.5,
+    blendMode: 'screen',
   },
 
   juice: {
@@ -117,6 +144,19 @@ export const CONFIG = {
     shotParticleCount: 3,
   },
 
+  scorePopup: {
+    duration: 0.9,
+    floatSpeed: 48,
+    fontSize: 15,
+    hueSpeed: 140,
+  },
+
+  enemySpawn: {
+    duration: 0.5,
+    particleCount: 20,
+    startRadius: 100,
+  },
+
   audio: {
     masterVolume: 0.35,
     thrustVolume: 0.08,
@@ -130,6 +170,9 @@ export const CONFIG = {
       carrySpeed: 70,
       abductTime: 1.2,
       beamRange: 60,
+      hoverAboveHumanoid: 22,
+      abductAlignX: 30,
+      abductAlignY: 28,
       score: 150,
     },
     mutant: {
