@@ -62,6 +62,8 @@ export class Game {
 
   start() {
     this.state = 'playing';
+    this.audio.init();
+    this.audio.startMusic();
     this.score = 0;
     this.nextExtraLife = CONFIG.scoring.extraLifeInterval;
     this.planetDestroyed = false;
@@ -125,12 +127,14 @@ export class Game {
     this.state = 'paused';
     this.ui.pauseOverlay.classList.remove('hidden');
     this.audio.stopThrust();
+    this.audio.pauseMusic();
   }
 
   resume() {
     if (this.state !== 'paused') return;
     this.state = 'playing';
     this.ui.pauseOverlay.classList.add('hidden');
+    this.audio.resumeMusic();
   }
 
   gameOver() {
@@ -148,6 +152,8 @@ export class Game {
   }
 
   update(dt) {
+    this.audio.update(dt);
+
     if (this.hitPause > 0) {
       this.hitPause -= dt * 1000;
       if (this.hitPause <= 0) this.hitPause = 0;

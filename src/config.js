@@ -158,8 +158,23 @@ export const CONFIG = {
   },
 
   audio: {
-    masterVolume: 0.35,
-    thrustVolume: 0.08,
+    masterVolume: 0.38,
+    musicVolume: 1.0,
+    musicAttenuation: 0.42,
+    musicPath: 'audio/music.mp3',
+    thrustHumVolume: 0.12,
+    thrustHumFreq: 46,
+    thrustHumFilterHz: 140,
+    thrustHumFadeMs: 120,
+    hitPing: {
+      baseFreq: 420,
+      pitchRatio: 1.08,
+      pitchBend: 1.22,
+      durationSec: 0.07,
+      volume: 0.11,
+      comboResetMs: 900,
+      maxStep: 24,
+    },
   },
 
   enemies: {
