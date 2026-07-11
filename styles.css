@@ -387,7 +387,7 @@ html.debug-mobile-controls body {
   grid-row: 1;
 }
 
-.pad-reverse {
+.pad-warp {
   grid-column: 3;
   grid-row: 1;
 }
@@ -409,11 +409,6 @@ html.debug-mobile-controls body {
 
 .dpad-down {
   grid-column: 2;
-  grid-row: 3;
-}
-
-.pad-warp {
-  grid-column: 3;
   grid-row: 3;
 }
 

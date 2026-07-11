@@ -260,7 +260,7 @@ export class Game {
     }
 
     if (this.input.fire()) {
-      const laser = this.player.tryFire(this.projectiles);
+      const laser = this.player.tryFire(this.projectiles, this.input.getFireCooldown());
       if (laser) {
         this.audio.play('laser');
         this.particles.shot(laser.x, laser.y, this.player.facing, CONFIG.colors.laser);

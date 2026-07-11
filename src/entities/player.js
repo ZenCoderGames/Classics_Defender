@@ -38,10 +38,6 @@ export class Player {
     const cfg = CONFIG.player;
     const move = input.getMovement();
 
-    if (input.reverse()) {
-      this.facing *= -1;
-    }
-
     if (move.dx !== 0) {
       this.facing = move.dx > 0 ? 1 : -1;
     }
@@ -62,12 +58,12 @@ export class Player {
     if (this.flash > 0) this.flash -= dt;
   }
 
-  tryFire(projectiles) {
+  tryFire(projectiles, fireCooldown = CONFIG.player.fireCooldown) {
     if (!this.alive || this.fireTimer > 0) return null;
     const active = projectiles.filter((p) => p.owner === 'player' && p.alive).length;
     if (active >= CONFIG.player.maxActiveShots) return null;
 
-    this.fireTimer = CONFIG.player.fireCooldown;
+    this.fireTimer = fireCooldown;
     const laser = createLaser(this.x, this.y, this.facing);
     projectiles.push(laser);
     return laser;

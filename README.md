@@ -23,7 +23,6 @@ Then open [http://localhost:8080](http://localhost:8080).
 | ↑ / ↓ | Thrust up / down |
 | ← / → | Move left / right |
 | Space | Fire laser |
-| Z | Reverse direction |
 | X | Smart bomb |
 | C | Hyperspace |
 | P / Esc | Pause |

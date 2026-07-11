@@ -29,7 +29,7 @@ export class Input {
       return;
     }
 
-    const tapActions = ['reverse', 'smartBomb', 'hyperspace', 'pause'];
+    const tapActions = ['smartBomb', 'hyperspace', 'pause'];
     if (tapActions.includes(name) && down) {
       this.touchJustPressed[name] = true;
     }
@@ -93,8 +93,15 @@ export class Input {
     return this.isDown('Space') || this.touch.fire;
   }
 
-  reverse() {
-    return this.wasPressed('KeyZ') || this.wasTouchPressed('reverse');
+  isMobileAutoFireActive() {
+    return CONFIG.mobile.autoFire && this.mobileAutoFire && this.isMobileViewport();
+  }
+
+  getFireCooldown() {
+    if (this.isMobileAutoFireActive()) {
+      return CONFIG.player.fireCooldown / CONFIG.mobile.autoFireRateMul;
+    }
+    return CONFIG.player.fireCooldown;
   }
 
   smartBomb() {

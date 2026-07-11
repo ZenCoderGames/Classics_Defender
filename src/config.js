@@ -7,6 +7,7 @@ export const CONFIG = {
   mobile: {
     breakpoint: 720,
     autoFire: true,
+    autoFireRateMul: 0.7,
   },
 
   canvas: {
