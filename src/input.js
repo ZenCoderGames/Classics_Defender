@@ -1,6 +1,7 @@
+import { CONFIG } from './config.js';
+
 export class Input {
-  constructor() {
-    this.keys = {};
+  constructor() {    this.keys = {};
     this.justPressed = {};
     this.touch = {
       left: false,
@@ -10,6 +11,7 @@ export class Input {
       fire: false,
     };
     this.touchJustPressed = {};
+    this.mobileAutoFire = false;
     this.enabled = true;
 
     window.addEventListener('keydown', (e) => this.onKeyDown(e));
@@ -78,7 +80,16 @@ export class Input {
     return { dx, dy };
   }
 
+  isMobileViewport() {
+    return window.matchMedia(
+      `(max-width: ${CONFIG.mobile.breakpoint}px) and (pointer: coarse)`,
+    ).matches;
+  }
+
   fire() {
+    if (CONFIG.mobile.autoFire && this.mobileAutoFire && this.isMobileViewport()) {
+      return true;
+    }
     return this.isDown('Space') || this.touch.fire;
   }
 

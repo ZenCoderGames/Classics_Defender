@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-show-mobile-controls="true" class="debug-mobile-controls">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Defender</title>
-  <link rel="stylesheet" href="styles.css?v=8">
-</head><body>
-  <div class="game-container">
+  <link rel="stylesheet" href="styles.css?v=11">
+</head>
+<body>  <div class="game-container">
     <header class="game-header">
       <div class="hud-card">
         <span class="hud-label">Score</span>
@@ -90,8 +90,7 @@
       </div>
     </main>
 
-    <div id="mobile-controls" class="mobile-controls is-visible" aria-label="Touch controls">
-      <div class="mobile-controls-pad" aria-label="Touch controls pad">
+    <div id="mobile-controls" class="mobile-controls" aria-label="Touch controls">      <div class="mobile-controls-pad" aria-label="Touch controls pad">
         <button type="button" class="control-btn control-btn-action pad-bomb" data-input="smartBomb" aria-label="Smart bomb">Bomb</button>
         <button type="button" class="control-btn control-btn-dpad dpad-up" data-input="up" aria-label="Thrust up">↑</button>
         <button type="button" class="control-btn control-btn-action pad-reverse" data-input="reverse" aria-label="Reverse">Rev</button>
@@ -103,16 +102,7 @@
       </div>
     </div>
 
-    <script>
-      (function () {
-        if (document.documentElement.getAttribute('data-show-mobile-controls') !== 'true') return;
-        var el = document.getElementById('mobile-controls');
-        if (el) el.style.setProperty('display', 'grid', 'important');
-      })();
-    </script>
-
-    <div class="game-footer">
-      <button id="music-toggle" class="music-toggle" type="button">Sound: On</button>
+    <div class="game-footer">      <button id="music-toggle" class="music-toggle" type="button">Sound: On</button>
       <a
         class="music-link"
         href="https://pixabay.com/users/mondamusic-54713575/"
@@ -122,5 +112,6 @@
     </div>
   </div>
 
-  <script type="module" src="src/main.js?v=4"></script></body>
+  <script type="module" src="src/main.js?v=11"></script>
+</body>
 </html>

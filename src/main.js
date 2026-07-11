@@ -3,29 +3,30 @@ import { Game, createGameLoop } from './game.js';
 
 function shouldShowMobileControls() {
   if (new URLSearchParams(window.location.search).has('mobileControls')) return true;
-  return CONFIG.debug.showMobileControls;
+  if (CONFIG.debug.showMobileControls) return true;
+  return window.matchMedia(
+    `(max-width: ${CONFIG.mobile.breakpoint}px) and (pointer: coarse)`,
+  ).matches;
 }
 
 function syncMobileControlsVisibility() {
   const show = shouldShowMobileControls();
-  const root = document.documentElement;
+  const debug = CONFIG.debug.showMobileControls
+    || new URLSearchParams(window.location.search).has('mobileControls');
   const controls = document.getElementById('mobile-controls');
 
-  root.toggleAttribute('data-show-mobile-controls', show);
-  root.classList.toggle('debug-mobile-controls', show);
-  document.body.classList.toggle('debug-mobile-controls', show);
-
-  if (controls) {
-    controls.classList.toggle('is-visible', show);
-    if (show) {
-      controls.style.setProperty('display', 'grid', 'important');
-    } else {
-      controls.style.removeProperty('display');
-    }
-  }
+  document.documentElement.classList.toggle('show-mobile-controls', show);
+  document.documentElement.classList.toggle('debug-mobile-controls', debug);
+  document.body.classList.toggle('debug-mobile-controls', debug);
+  if (controls) controls.hidden = !show;
 }
 
 syncMobileControlsVisibility();
+
+const mobileControlsQuery = window.matchMedia(
+  `(max-width: ${CONFIG.mobile.breakpoint}px) and (pointer: coarse)`,
+);
+mobileControlsQuery.addEventListener('change', syncMobileControlsVisibility);
 
 const canvas = document.getElementById('game-canvas');
 const radarCanvas = document.getElementById('radar-canvas');
@@ -87,7 +88,8 @@ function bindMobileControls() {
 
 bindMobileControls();
 
-document.getElementById('play-btn').addEventListener('click', () => {  game.audio.init();
+document.getElementById('play-btn').addEventListener('click', () => {
+  game.audio.init();
   game.start();
 });
 

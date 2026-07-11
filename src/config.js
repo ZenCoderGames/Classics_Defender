@@ -4,6 +4,11 @@ export const CONFIG = {
     showMobileControls: false,
   },
 
+  mobile: {
+    breakpoint: 720,
+    autoFire: true,
+  },
+
   canvas: {
     width: 640,
     height: 480,

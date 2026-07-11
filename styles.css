@@ -357,15 +357,11 @@ body::after {
   box-shadow: inset 0 1px 0 rgba(57, 255, 20, 0.06);
 }
 
-.mobile-controls.is-visible,
-html[data-show-mobile-controls="true"] .mobile-controls,
-html.debug-mobile-controls .mobile-controls,
-body.debug-mobile-controls .mobile-controls {
-  display: grid !important;
+html.show-mobile-controls .mobile-controls {
+  display: grid;
 }
 
-html.debug-mobile-controls body,
-html[data-show-mobile-controls="true"] body {
+html.debug-mobile-controls body {
   align-items: flex-start;
   justify-content: flex-start;
   padding: 1rem 0 2rem;
@@ -374,9 +370,9 @@ html[data-show-mobile-controls="true"] body {
 
 .mobile-controls-pad {
   display: grid;
-  grid-template-columns: repeat(3, 2.2rem);
-  grid-template-rows: repeat(3, 2.2rem);
-  gap: 0.3rem;
+  grid-template-columns: repeat(3, 2.75rem);
+  grid-template-rows: repeat(3, 2.75rem);
+  gap: 0.375rem;
   width: fit-content;
   margin: 0 auto;
 }
@@ -422,9 +418,9 @@ html[data-show-mobile-controls="true"] body {
 }
 
 .mobile-controls .control-btn {
-  min-height: 2rem;
-  border-radius: 7px;
-  font-size: 0.78rem;
+  min-height: 2.5rem;
+  border-radius: 9px;
+  font-size: 0.98rem;
   letter-spacing: 0.04em;
   box-shadow:
     inset 0 1px 0 rgba(57, 255, 20, 0.1),
@@ -435,12 +431,12 @@ html[data-show-mobile-controls="true"] body {
   aspect-ratio: 1;
   min-height: 0;
   padding: 0;
-  font-size: 0.94rem;
+  font-size: 1.18rem;
 }
 
 .mobile-controls .control-btn-action {
-  min-height: 2rem;
-  font-size: 0.63rem;
+  min-height: 2.5rem;
+  font-size: 0.79rem;
 }
 
 .control-btn {
@@ -487,7 +483,7 @@ html[data-show-mobile-controls="true"] body {
     0 0 16px rgba(57, 255, 20, 0.35);
 }
 
-@media (max-width: 720px) {
+@media (max-width: 720px) and (pointer: coarse) {
   .game-container {
     padding-top: 1rem;
   }
@@ -522,7 +518,7 @@ html[data-show-mobile-controls="true"] body {
     display: none;
   }
 
-  .mobile-controls {
-    display: grid;
+  .pad-fire {
+    display: none;
   }
 }

@@ -252,6 +252,8 @@ export class Game {
   }
 
   handleInput() {
+    this.input.mobileAutoFire = this.state === 'playing' && this.player.alive;
+
     if (this.input.pause()) {
       this.pause();
       return;
