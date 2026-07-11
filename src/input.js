@@ -2,10 +2,35 @@ export class Input {
   constructor() {
     this.keys = {};
     this.justPressed = {};
+    this.touch = {
+      left: false,
+      right: false,
+      up: false,
+      down: false,
+      fire: false,
+    };
+    this.touchJustPressed = {};
     this.enabled = true;
 
     window.addEventListener('keydown', (e) => this.onKeyDown(e));
     window.addEventListener('keyup', (e) => this.onKeyUp(e));
+  }
+
+  setTouch(name, down) {
+    if (!this.enabled) return;
+
+    if (name in this.touch) {
+      if (down && !this.touch[name]) {
+        this.touchJustPressed[name] = true;
+      }
+      this.touch[name] = down;
+      return;
+    }
+
+    const tapActions = ['reverse', 'smartBomb', 'hyperspace', 'pause'];
+    if (tapActions.includes(name) && down) {
+      this.touchJustPressed[name] = true;
+    }
   }
 
   onKeyDown(e) {
@@ -34,37 +59,42 @@ export class Input {
     return !!this.justPressed[code];
   }
 
+  wasTouchPressed(name) {
+    return !!this.touchJustPressed[name];
+  }
+
   clearJustPressed() {
     this.justPressed = {};
+    this.touchJustPressed = {};
   }
 
   getMovement() {
     let dx = 0;
     let dy = 0;
-    if (this.isDown('ArrowLeft') || this.isDown('KeyA')) dx -= 1;
-    if (this.isDown('ArrowRight') || this.isDown('KeyD')) dx += 1;
-    if (this.isDown('ArrowUp') || this.isDown('KeyW')) dy -= 1;
-    if (this.isDown('ArrowDown') || this.isDown('KeyS')) dy += 1;
+    if (this.isDown('ArrowLeft') || this.isDown('KeyA') || this.touch.left) dx -= 1;
+    if (this.isDown('ArrowRight') || this.isDown('KeyD') || this.touch.right) dx += 1;
+    if (this.isDown('ArrowUp') || this.isDown('KeyW') || this.touch.up) dy -= 1;
+    if (this.isDown('ArrowDown') || this.isDown('KeyS') || this.touch.down) dy += 1;
     return { dx, dy };
   }
 
   fire() {
-    return this.isDown('Space');
+    return this.isDown('Space') || this.touch.fire;
   }
 
   reverse() {
-    return this.wasPressed('KeyZ');
+    return this.wasPressed('KeyZ') || this.wasTouchPressed('reverse');
   }
 
   smartBomb() {
-    return this.wasPressed('KeyX');
+    return this.wasPressed('KeyX') || this.wasTouchPressed('smartBomb');
   }
 
   hyperspace() {
-    return this.wasPressed('KeyC');
+    return this.wasPressed('KeyC') || this.wasTouchPressed('hyperspace');
   }
 
   pause() {
-    return this.wasPressed('KeyP') || this.wasPressed('Escape');
+    return this.wasPressed('KeyP') || this.wasPressed('Escape') || this.wasTouchPressed('pause');
   }
 }

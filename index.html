@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-show-mobile-controls="true" class="debug-mobile-controls">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Defender</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
+  <link rel="stylesheet" href="styles.css?v=8">
+</head><body>
   <div class="game-container">
     <header class="game-header">
       <div class="hud-card">
@@ -61,7 +60,7 @@
       <div id="controls-overlay" class="overlay hidden">
         <div class="popup">
           <h2>Controls</h2>
-          <ul class="controls-list">
+          <ul class="controls-list controls-hint">
             <li><kbd>↑</kbd> / <kbd>↓</kbd> — Thrust up / down</li>
             <li><kbd>←</kbd> / <kbd>→</kbd> — Move left / right</li>
             <li><kbd>Space</kbd> — Fire laser</li>
@@ -91,6 +90,27 @@
       </div>
     </main>
 
+    <div id="mobile-controls" class="mobile-controls is-visible" aria-label="Touch controls">
+      <div class="mobile-controls-pad" aria-label="Touch controls pad">
+        <button type="button" class="control-btn control-btn-action pad-bomb" data-input="smartBomb" aria-label="Smart bomb">Bomb</button>
+        <button type="button" class="control-btn control-btn-dpad dpad-up" data-input="up" aria-label="Thrust up">↑</button>
+        <button type="button" class="control-btn control-btn-action pad-reverse" data-input="reverse" aria-label="Reverse">Rev</button>
+        <button type="button" class="control-btn control-btn-dpad dpad-left" data-input="left" aria-label="Move left">←</button>
+        <button type="button" class="control-btn control-btn-dpad dpad-right" data-input="right" aria-label="Move right">→</button>
+        <button type="button" class="control-btn control-btn-action pad-fire" data-input="fire" aria-label="Fire">Fire</button>
+        <button type="button" class="control-btn control-btn-dpad dpad-down" data-input="down" aria-label="Thrust down">↓</button>
+        <button type="button" class="control-btn control-btn-action pad-warp" data-input="hyperspace" aria-label="Hyperspace">Warp</button>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        if (document.documentElement.getAttribute('data-show-mobile-controls') !== 'true') return;
+        var el = document.getElementById('mobile-controls');
+        if (el) el.style.setProperty('display', 'grid', 'important');
+      })();
+    </script>
+
     <div class="game-footer">
       <button id="music-toggle" class="music-toggle" type="button">Sound: On</button>
       <a
@@ -102,6 +122,5 @@
     </div>
   </div>
 
-  <script type="module" src="src/main.js"></script>
-</body>
+  <script type="module" src="src/main.js?v=4"></script></body>
 </html>

@@ -1,5 +1,9 @@
 /** All tunable game parameters */
 export const CONFIG = {
+  debug: {
+    showMobileControls: false,
+  },
+
   canvas: {
     width: 640,
     height: 480,
